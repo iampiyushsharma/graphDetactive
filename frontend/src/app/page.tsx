@@ -15,7 +15,8 @@ import {
 	HardDrive,
 	ShieldAlert,
 	RefreshCw,
-	Eye
+	Eye,
+	X
 } from "lucide-react";
 import GraphExplorer from "../components/GraphExplorer";
 
@@ -397,17 +398,26 @@ export default function Home() {
 						{/* Node details panel */}
 						{selectedNode && (
 							<div className="w-80 border border-zinc-800 rounded-xl bg-zinc-900/40 p-4 flex flex-col overflow-y-auto animate-fade-in shrink-0">
-								<div className="flex items-center gap-2 pb-3 border-b border-zinc-800 mb-4">
-									{selectedNode.type === "Incident" && <ShieldAlert className="w-5 h-5 text-red-500" />}
-									{selectedNode.type === "Service" && <Server className="w-5 h-5 text-blue-500" />}
-									{selectedNode.type === "Database" && <Database className="w-5 h-5 text-cyan-500" />}
-									{selectedNode.type === "Deployment" && <HardDrive className="w-5 h-5 text-purple-500" />}
-									{selectedNode.type === "Commit" && <GitCommit className="w-5 h-5 text-orange-500" />}
-									{selectedNode.type === "ConfigChange" && <Sliders className="w-5 h-5 text-yellow-500" />}
-									<div>
-										<h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">{selectedNode.type}</h4>
-										<div className="text-xs font-semibold text-zinc-200 truncate max-w-[190px]">{selectedNode.data.label}</div>
+								<div className="flex items-start justify-between pb-3 border-b border-zinc-800 mb-4">
+									<div className="flex items-center gap-2">
+										{selectedNode.type === "Incident" && <ShieldAlert className="w-5 h-5 text-red-500" />}
+										{selectedNode.type === "Service" && <Server className="w-5 h-5 text-blue-500" />}
+										{selectedNode.type === "Database" && <Database className="w-5 h-5 text-cyan-500" />}
+										{selectedNode.type === "Deployment" && <HardDrive className="w-5 h-5 text-purple-500" />}
+										{selectedNode.type === "Commit" && <GitCommit className="w-5 h-5 text-orange-500" />}
+										{selectedNode.type === "ConfigChange" && <Sliders className="w-5 h-5 text-yellow-500" />}
+										<div>
+											<h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">{selectedNode.type}</h4>
+											<div className="text-xs font-semibold text-zinc-200 truncate max-w-[150px]" title={selectedNode.data.label}>{selectedNode.data.label}</div>
+										</div>
 									</div>
+									<button 
+										onClick={() => setSelectedNode(null)}
+										className="text-zinc-500 hover:text-zinc-100 transition p-1 hover:bg-zinc-800 rounded-md"
+										aria-label="Close panel"
+									>
+										<X className="w-4 h-4" />
+									</button>
 								</div>
 
 								<div className="flex-1 space-y-4">
