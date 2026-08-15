@@ -20,7 +20,8 @@ import {
 } from "lucide-react";
 import GraphExplorer from "../components/GraphExplorer";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const rawApiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_BASE = rawApiBase.replace(/\/+$/, "");
 
 export default function Home() {
 	const [dbStatus, setDbStatus] = useState<"connected" | "disconnected" | "checking">("checking");
