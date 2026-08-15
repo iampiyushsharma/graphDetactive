@@ -103,16 +103,33 @@ graph TD
 
 ---
 
+## 💡 Example Scenario Walkthrough (Incident 1)
+
+To see Graph Detective in action, consider **Incident 1 (Checkout Failures)**, populated by our seed script. Here is how an SRE uses the platform to isolate the issue:
+
+1. **The Alert:** The SRE opens the dashboard and selects **Order Checkout Failures (HTTP 500)**.
+2. **Root Cause Analysis:** Clicking **Trace Root Cause** triggers the `shortestPath` query. The UI renders the following causal graph path:
+   `Incident (inc-101) -> Service (OrderService) -> Service (PaymentService) <- Deployment (dep-992) -> Commit (com-442) -> ConfigChange (cfg-101)`
+3. **The Culprit Identified:** By clicking on the **ConfigChange** node, the SRE views the properties panel:
+   * **Key:** `payment_timeout_ms`
+   * **Old Value:** `5000`
+   * **New Value:** `50`
+   * **Commit Message:** *"refactor(payment): lower timeout for faster client failover"*
+   * **Author:** `Sarah Jenkins` (`sarah@novacart.io`)
+   * SRE immediately contacts Sarah to rollback the configuration timeout change.
+4. **Blast Radius Mapping:** Next, the SRE selects `OrderService` and clicks **Analyze Blast Radius**. The graph displays:
+   `gateway -> order-service`
+   This reveals that the public **Gateway** depends on `OrderService`, meaning checkout errors are affecting all incoming client requests on the gateway route.
+
+---
+
 ## 📝 Main Cypher Queries Explained
 
-### 1. Root Cause Path Analysis (4 Hops)
-Finds the causal chain showing recent deployments and configuration changes affecting a service within a 2-hour window before the incident occurred:
+### 1. Root Cause Path Analysis (Graph-Native shortestPath)
+Finds the causal chain showing how an incident is connected to suspicious configuration updates through deployments and commits within a 6-hop depth limit:
 ```cypher
-MATCH path = (i:Incident {id: $incidentId})-[:AFFECTS]->(s:Service)
-              <-[:TO_SERVICE|TO_DATABASE]-(d:Deployment)
-              -[:CONTAINS]->(c:Commit)
-              -[:MODIFIED_CONFIG]->(cc:ConfigChange)
-WHERE d.deployedAt <= i.createdAt AND d.deployedAt >= i.createdAt - duration({hours: 2})
+MATCH (i:Incident {id: $incidentId})
+MATCH path = shortestPath((i)-[*..6]-(cc:ConfigChange))
 RETURN path
 ```
 
@@ -124,7 +141,7 @@ RETURN path
 ```
 
 ### 3. Bidirectional 1-Hop Topology Map
-Displays immediate upstream dependencies (things the service depends on) and downstream dependencies (things depending on the service) for standard architectural viewing:
+Displays immediate upstream dependencies (things the service depends on) and downstream dependencies (things depending on the service):
 ```cypher
 MATCH (s {id: $serviceId})
 OPTIONAL MATCH (s)-[r1:DEPENDS_ON]->(u)
