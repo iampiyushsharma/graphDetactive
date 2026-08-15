@@ -162,12 +162,10 @@ func (r *GraphRepository) GetRootCause(ctx context.Context, incidentID string) (
 	session := r.db.Driver.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	defer session.Close(ctx)
 
-	// Cypher query to trace: Incident -> Service -> Deployment -> Commit -> ConfigChange
+	// Cypher query to trace: Incident -> Service -> [Dependencies] -> Deployment -> Commit -> ConfigChange
 	query := `
-		MATCH path = (i:Incident {id: $incidentId})-[:AFFECTS]->(s)
-					  <-[:TO_SERVICE|TO_DATABASE]-(d:Deployment)
-					  -[:CONTAINS]->(c:Commit)
-					  -[:MODIFIED_CONFIG]->(cc:ConfigChange)
+		MATCH (i:Incident {id: $incidentId})
+		MATCH path = shortestPath((i)-[*..6]-(cc:ConfigChange))
 		RETURN path
 	`
 
