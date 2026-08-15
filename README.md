@@ -8,9 +8,9 @@ In modern microservice architectures, resolving a production incident requires c
 ---
 
 ## 🚀 Live Demo & Demo Video
-* **Hosted Frontend (Vercel):** [https://graph-detective-frontend.vercel.app](https://graph-detective-frontend.vercel.app) *(Note: Please replace with your actual URL)*
-* **Hosted Backend (Render):** [https://graph-detective-backend.onrender.com](https://graph-detective-backend.onrender.com) *(Note: Please replace with your actual URL)*
-* **3-Minute Loom Walkthrough:** [https://www.loom.com/share/...](https://www.loom.com/share/...) *(Note: Please replace with your actual Loom link)*
+* **Hosted Frontend (Vercel):** [https://graph-detactive.vercel.app/](https://graph-detactive.vercel.app/)
+* **Hosted Backend (Render):** [https://graphdetactive.onrender.com](https://graphdetactive.onrender.com)
+* **Demo Walkthrough Video:** *(Insert your screen recording link here)*
 
 ---
 
